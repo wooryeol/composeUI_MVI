@@ -22,5 +22,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "compose-mvvm"
+rootProject.name = "compose-mvi"
 include(":app")
