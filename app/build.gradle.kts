@@ -21,7 +21,7 @@ android {
         applicationId = "com.example.compose"
         minSdk = 24
         targetSdk = 36
-        versionCode = 26041502
+        versionCode = 26041601
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
