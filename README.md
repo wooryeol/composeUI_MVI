@@ -3,25 +3,71 @@
 ## 🧱 프로젝트 구조
 
 ```
-com.example.app 
-┣ 📂 core 
-┃ ┗ 📂 base 
-┃ ┣ MviContract.kt 
-┃ ┗ MviViewModel.kt 
-┣ 📂 data 
-┃ ┗ 📂 catfact 
-┃ ┣ remote 
-┃ ┣ repository 
-┃ ┗ mapper 
-┣ 📂 presentation 
-┃ ┣ navigation 
-┃ ┗ catfact 
-┃ ┣ CatFactContract.kt 
-┃ ┣ CatFactViewModel.kt 
-┃ ┣ CatFactScreen.kt 
-┃ ┗ CatFactNavigation.kt 
-┣ 📂 di 
-┗ MainActivity.kt
+com.example.app
+
+core/
+ ┣ base/
+ ┃ ┣ MviContract.kt
+ ┃ ┣ BaseViewModel.kt
+ ┃ ┗ UiState.kt
+ ┃
+ ┣ network/
+ ┃ ┣ RetrofitProvider.kt
+ ┃ ┣ OkHttpProvider.kt
+ ┃ ┗ interceptor/
+ ┃   ┗ LoggingInterceptor.kt
+ ┃
+ ┣ database/
+ ┃ ┣ AppDatabase.kt
+ ┃ ┗ BaseDao.kt
+ ┃
+ ┗ util/
+   ┣ TimberLogger.kt
+   ┗ Extensions.kt
+   
+feature/
+ ┗ create/
+    ┣ presentation/
+    ┃ ┣ CreateScreen.kt
+    ┃ ┣ CreatetViewModel.kt
+    ┃ ┣ CreateContract.kt
+    ┃ ┗ CreateNavigation.kt
+    ┃
+    ┣ domain/
+    ┃ ┣ model/
+    ┃ ┃ ┗ Create.kt
+    ┃ ┣ repository/
+    ┃ ┃ ┗ CreateRepository.kt
+    ┃ ┗ usecase/
+    ┃   ┗ GetCreateUseCase.kt
+    ┃
+    ┣ data/
+    ┃ ┣ remote/
+    ┃ ┃ ┣ CreateApi.kt
+    ┃ ┃ ┗ dto/
+    ┃ ┃   ┗ CreateDto.kt
+    ┃ ┃
+    ┃ ┣ datasource/
+    ┃ ┃ ┗ CreateRemoteDataSource.kt
+    ┃ ┃
+    ┃ ┣ repository/
+    ┃ ┃ ┗ CreateRepositoryImpl.kt
+    ┃ ┃
+    ┃ ┗ mapper/
+    ┃   ┗ CreateMapper.kt
+    ┃
+    ┗ di/
+      ┗ CreateModule.kt
+
+di/
+ ┣ NetworkModule.kt
+ ┗ RepositoryModule.kt
+ 
+ navigation/
+ ┗ NavGraph.kt
+ 
+┣ MainActivity.kt
+┗ MyApplication.kt
 ```
 
 ---
@@ -60,13 +106,18 @@ Intent → ViewModel → State → UI
 ## 4. Feature 기반 구조
 
 ```
-presentation/catfact
-data/catfact
+presentation/create
+data/create
 ```
 
 * 기능 단위로 코드 응집
 * 확장 및 협업에 유리
 
+## 5. Timber 로그 적용
+* 기본 Log.d() 대신 간결한 로그 사용
+* 디버그 시 클래스 / 라인 / 메서드 정보 출력
+* 릴리즈 시 불필요한 로그 제거 및 에러만 관리
+* 추후 Crashlytics 등과 연동 가능한 구조
 ---
 
 # 📡 오프라인 대응 전략
@@ -83,7 +134,7 @@ UI → Local DB → Sync Queue → WorkManager → Server
 
 ## ⚙️ 구성 요소
 
-### 1. Room (SQLite)
+### 1. Room
 
 * 데이터 로컬 저장
 * UI는 항상 DB 기준으로 동작
@@ -127,3 +178,4 @@ UI → Local DB → Sync Queue → WorkManager → Server
 * **Offline First 구조**로 네트워크 의존성 최소화
 
 👉 WMS 환경에 최적화된 구조 설계
+

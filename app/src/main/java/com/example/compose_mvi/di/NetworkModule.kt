@@ -1,8 +1,9 @@
 package com.example.compose_mvi.di
 
-import com.example.compose_mvi.data.catfact.remote.CatFactApi
-import com.example.compose_mvi.data.catfact.repository.CatFactRepository
-import com.example.compose_mvi.data.catfact.repository.CatFactRepositoryImpl
+import com.example.compose_mvi.core.network.OkHttpProvider
+import com.example.compose_mvi.core.network.RetrofitProvider
+import com.example.compose_mvi.core.utils.LogTag
+import com.example.compose_mvi.core.utils.logD
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -10,43 +11,31 @@ import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
-import javax.inject.Singleton
+import timber.log.Timber
 
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
 
-    // 고양이에 대한 흥미로운 사실 api
-    private val BASE_URL = "https://catfact.ninja/"
-    private val logging = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
-    }
-
-
-    private val client = OkHttpClient.Builder()
-        .addInterceptor(logging)
-        .build()
-
     @Provides
-    @Singleton
-    fun retrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(BASE_URL)
-            .client(client)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
+    fun provideLoggingInterceptor(): HttpLoggingInterceptor {
+        val logger = HttpLoggingInterceptor.Logger { msg -> logD(LogTag.NETWORK, msg) }
+        return HttpLoggingInterceptor(logger).apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
     }
 
     @Provides
-    @Singleton
-    fun provideCatFactApi(retrofit: Retrofit): CatFactApi {
-        return retrofit.create(CatFactApi::class.java)
+    fun provideOkHttpClient(
+        logging: HttpLoggingInterceptor
+    ): OkHttpClient {
+        return OkHttpProvider.provideClient(logging)
     }
 
     @Provides
-    @Singleton
-    fun provideCatFactRepository(api: CatFactApi): CatFactRepository {
-        return CatFactRepositoryImpl(api)
+    fun provideRetrofit(
+        client: OkHttpClient
+    ): Retrofit {
+        return RetrofitProvider.provideRetrofit(client)
     }
 }

@@ -5,7 +5,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.compose.rememberNavController
-import com.example.compose_mvi.presentation.navigation.NavGraph
+import com.example.compose_mvi.navigation.NavGraph
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint

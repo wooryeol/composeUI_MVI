@@ -12,15 +12,36 @@ import kotlinx.coroutines.launch
 
 abstract class MviViewModel<Intent: MviIntent, State: MviState, Effect: MviEffect>: ViewModel() {
 
-    abstract fun createInitialState(): State
-
+    // -------------------------
+    // State
+    // -------------------------
     private val _state = MutableStateFlow(createInitialState())
     val state: StateFlow<State> = _state.asStateFlow()
+
+
+    // -------------------------
+    // Effect
+    // -------------------------
 
     private val _effect = MutableSharedFlow<Effect>()
     val effect: SharedFlow<Effect> = _effect.asSharedFlow()
 
-    abstract fun handleIntent(intent: Intent)
+
+    // -------------------------
+    // Intent 처리
+    // -------------------------
+
+    fun sendIntent(intent: Intent) {
+        handleIntent(intent)
+    }
+    protected abstract fun handleIntent(intent: Intent)
+
+    protected abstract fun createInitialState(): State
+
+
+    // -------------------------
+    // State 업데이트
+    // -------------------------
 
     protected fun setState(reducer: State.() -> State) {
         val newState = _state.value.reducer()
